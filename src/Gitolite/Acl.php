@@ -26,18 +26,31 @@ class Acl
         'C', 'R', 'RW', 'RW+', '-', 'RWC', 'RW+C', 'RWD', 'RW+D', 'RWCD', 'RW+CD', 'RWDC', 'RW+DC',
     );
 
+    /**
+     * @var string
+     */
     protected $permission = null;
 
+    /**
+     * @var string
+     */
     protected $refexes = '';
 
+    /**
+     * @var User[]
+     */
     protected $users = array();
 
+    /**
+     * @var Team[]
+     */
     protected $teams = array();
 
     /**
      * Set Permission
      *
-     * Valids: C, R, RW, RW+, -, RWC, RW+C, RWD, RW+D, RWCD, RW+CD, RWDC, RW+DC
+     * Validates the following permissions:
+     * C, R, RW, RW+, -, RWC, RW+C, RWD, RW+D, RWCD, RW+CD, RWDC, RW+DC
      *
      * @param string $permission A permission
      *
@@ -45,11 +58,12 @@ class Acl
      */
     public function setPermission($permission)
     {
-        $permission = (string) $permission;
+        $permission = (string)$permission;
         if (!in_array($permission, $this->allowedPermissions)) {
             throw new \Exception("Unknow permission '{$permission}'");
         }
         $this->permission = $permission;
+
         return $this;
     }
 
@@ -73,6 +87,7 @@ class Acl
     public function setRefexes($refexes)
     {
         $this->refexes = $refexes;
+
         return $this;
     }
 
@@ -90,16 +105,18 @@ class Acl
     /**
      * Set Users
      *
-     * @param array $users An array of user objects
+     * @param User[] $users An array of user objects
      *
      * @return self
      */
     public function setUsers(array $users)
     {
         $this->users = array();
+
         foreach ($users as $user) {
             $this->addUser($user);
         }
+
         return $this;
     }
 
@@ -123,22 +140,25 @@ class Acl
     public function addUser(User $user)
     {
         $this->users[] = $user;
+
         return $this;
     }
 
     /**
      * Set Teams
      *
-     * @param array $teams An array of team objects
+     * @param Team[] $teams An array of team objects
      *
      * @return self
      */
     public function setTeams(array $teams)
     {
         $this->teams = array();
+
         foreach ($teams as $team) {
             $this->addTeam($team);
         }
+
         return $this;
     }
 
@@ -162,6 +182,7 @@ class Acl
     public function addTeam(Team $team)
     {
         $this->teams[] = $team;
+
         return $this;
     }
 
@@ -170,23 +191,26 @@ class Acl
      *
      * Format: <permission> <zero or more refexes> = <one or more users/user teams>
      *
-     * @param string $nl Include a new line (default true)
+     * @param bool $newLine Include a new line (default true)
      *
      * @return string
+     *
+     * @throws \Exception if permissions are not defined
+     * @throws \Exception if no teams and users exist
      */
-    public function render($nl=true)
+    public function render($newLine = true)
     {
         if (null === $this->permission) {
-            throw new \Exception("Permission not defined");
+            throw new \Exception("Permission not defined.");
         }
 
         if (count($this->teams) == 0 && count($this->users) == 0) {
-            throw new \Exception("No users neither teams defined");
+            throw new \Exception("No users neither teams defined.");
         }
 
         $teams = array();
         foreach ($this->getTeams() as $team) {
-            $teams[] = $team->getFormatedName();
+            $teams[] = $team->getFormattedName();
         }
 
         $users = array();
@@ -194,13 +218,13 @@ class Acl
             $users[] = $user->getUsername();
         }
 
-        $refexes = ( ! empty($this->refexes)) ? $this->refexes . ' ' : '';
+        $refexes = (!empty($this->refexes)) ? $this->refexes . ' ' : '';
 
         return $this->permission . ' '
-                . $refexes
-                . '= '
-                . implode(' ', $users) . ' '
-                . implode(' ', $teams)
-                . ($nl ? PHP_EOL : '');
+            . $refexes
+            . '= '
+            . implode(' ', $users) . ' '
+            . implode(' ', $teams)
+            . ($newLine ? PHP_EOL : '');
     }
 }

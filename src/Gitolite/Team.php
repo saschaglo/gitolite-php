@@ -22,8 +22,19 @@ namespace Gitolite;
  */
 class Team
 {
+    /**
+     * @var string
+     */
     protected $name = null;
+
+    /**
+     * @var User[]
+     */
     protected $users = array();
+
+    /**
+     * @var Team[]
+     */
     protected $teams = array();
 
     /**
@@ -35,7 +46,8 @@ class Team
      */
     public function setName($name)
     {
-        $this->name = (string) $name;
+        $this->name = (string)$name;
+
         return $this;
     }
 
@@ -54,7 +66,7 @@ class Team
      *
      * @return string
      */
-    public function getFormatedName()
+    public function getFormattedName()
     {
         return '@' . $this->name;
     }
@@ -62,16 +74,18 @@ class Team
     /**
      * Set Users
      *
-     * @param array $users An array of user objects
+     * @param User[] $users An array of user objects
      *
      * @return self
      */
     public function setUsers(array $users)
     {
         $this->users = array();
+
         foreach ($users as $user) {
             $this->addUser($user);
         }
+
         return $this;
     }
 
@@ -95,6 +109,7 @@ class Team
     public function addUser(User $user)
     {
         $this->users[] = $user;
+
         return $this;
     }
 
@@ -108,9 +123,11 @@ class Team
     public function setTeams(array $teams)
     {
         $this->teams = array();
+
         foreach ($teams as $team) {
             $this->addTeam($team);
         }
+
         return $this;
     }
 
@@ -134,6 +151,7 @@ class Team
     public function addTeam(Team $team)
     {
         $this->teams[] = $team;
+
         return $this;
     }
 
@@ -142,11 +160,11 @@ class Team
      *
      * Format: @<team_name> = <user 1> <user 2> <user 3> <user 'n'>
      *
-     * @param string $nl Include a new line (default true)
+     * @param bool $newLine Include a new line (default true)
      *
      * @return string
      */
-    public function render($nl=true)
+    public function render($newLine = true)
     {
         $users = array();
         foreach ($this->getUsers() as $user) {
@@ -155,12 +173,12 @@ class Team
 
         $teams = array();
         foreach ($this->getTeams() as $team) {
-            $teams[] = $team->getFormatedName();
+            $teams[] = $team->getFormattedName();
         }
 
         return $this->getFormatedName() . ' = '
-                . implode(' ', $users) . ' '
-                . implode(' ', $teams)
-                . ($nl ? PHP_EOL : '');
+            . implode(' ', $users) . ' '
+            . implode(' ', $teams)
+            . ($newLine ? PHP_EOL : '');
     }
 }

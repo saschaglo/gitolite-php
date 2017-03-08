@@ -22,7 +22,14 @@ namespace Gitolite;
  */
 class Repo
 {
+    /**
+     * @var string
+     */
     protected $name = null;
+
+    /**
+     * @var Acl[]
+     */
     protected $acls = array();
 
     /**
@@ -34,7 +41,8 @@ class Repo
      */
     public function setName($name)
     {
-        $this->name = (string) $name;
+        $this->name = (string)$name;
+
         return $this;
     }
 
@@ -51,13 +59,14 @@ class Repo
     /**
      * Set Acls
      *
-     * @param array $acls An array of acl objects
+     * @param Acl[] $acls An array of acl objects
      *
      * @return self
      */
     public function setAcls(array $acls)
     {
         $this->acls = $acls;
+
         return $this;
     }
 
@@ -81,6 +90,7 @@ class Repo
     public function addAcl(Acl $acl)
     {
         $this->acls[] = $acl;
+
         return $this;
     }
 
@@ -90,11 +100,13 @@ class Repo
      * Format: @<team_name> = <user 1> <user 2> <user 3> <user 'n'>
      *
      * @return string
+     *
+     * @throws \Exception if no acl objects were defined beforehand
      */
     public function render()
     {
         if (count($this->acls) == 0) {
-            throw new \Exception("No acls for repo {$this->getName()}");
+            throw new \Exception("No ACL definitions for repo {$this->getName()}.");
         }
 
         $return = 'repo ' . $this->getName() . PHP_EOL;

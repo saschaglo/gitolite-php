@@ -22,8 +22,19 @@ namespace Gitolite;
  */
 class User
 {
+    /**
+     * @var string
+     */
     protected $username = null;
+
+    /**
+     * @var string
+     */
     protected $email = null;
+
+    /**
+     * @var array
+     */
     protected $keys = array();
 
     /**
@@ -35,7 +46,8 @@ class User
      */
     public function setUsername($username)
     {
-        $this->username = (string) $username;
+        $this->username = (string)$username;
+
         return $this;
     }
 
@@ -59,9 +71,11 @@ class User
     public function setKeys(array $keys)
     {
         $this->keys = array();
+
         foreach ($keys as $key) {
             $this->addKey($key);
         }
+
         return $this;
     }
 
@@ -79,6 +93,8 @@ class User
      * Get First Key
      *
      * @return string
+     *
+     * @throws \Exception if no key was found
      */
     public function getFirstKey()
     {
@@ -86,7 +102,7 @@ class User
             throw new \Exception("No key for user {$this->getUsername()} found.");
         }
 
-        return (string) $this->keys[0];
+        return (string)$this->keys[0];
     }
 
     /**
@@ -98,7 +114,8 @@ class User
      */
     public function addKey($key)
     {
-        $this->keys[] = (string) $key;
+        $this->keys[] = (string)$key;
+
         return $this;
     }
 
@@ -111,7 +128,8 @@ class User
      */
     public function setEmail($email)
     {
-        $this->email = (string) $email;
+        $this->email = (string)$email;
+
         return $this;
     }
 
@@ -127,6 +145,8 @@ class User
 
     /**
      * Returns key filename in form username.pub
+     *
+     * @param string|null $suffix
      *
      * @return string
      */

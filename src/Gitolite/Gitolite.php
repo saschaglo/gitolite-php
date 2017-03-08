@@ -22,26 +22,60 @@ namespace Gitolite;
  */
 class Gitolite
 {
+    const GITOLITE_CONF_FILE = 'gitolite.conf';
+    const GITOLITE_CONF_DIR  = 'conf/';
+    const GITOLITE_KEY_DIR   = 'keydir/';
+    const GITOLITE_REPO_DIR  = 'conf/repos/';
+
+    /**
+     * @var string
+     */
     protected $gitRemoteRepositoryURL = null;
+
+    /**
+     * @var string
+     */
     protected $gitLocalRepositoryPath = null;
+
+    /**
+     * @var string
+     */
     protected $gitEmail = null;
+
+    /**
+     * @var string
+     */
     protected $gitUsername = null;
+
+    /**
+     * @var string
+     */
     protected $gitServerName = null;
+
     /**
      * @var PHPGit_Repository
      */
     protected $gitoliteRepository = null;
 
+    /**
+     * @var User[]
+     */
     protected $users = array();
+
+    /**
+     * @var Team[]
+     */
     protected $teams = array();
+
+    /**
+     * @var Repo[]
+     */
     protected $repos = array();
 
+    /**
+     * @var array
+     */
     protected $log = array();
-
-    const GITOLITE_CONF_FILE = 'gitolite.conf';
-    const GITOLITE_CONF_DIR  = 'conf/';
-    const GITOLITE_KEY_DIR   = 'keydir/';
-    const GITOLITE_REPO_DIR  = 'conf/repos/';
 
     /**
      * Set GitRemoteRepositoryURL
@@ -52,7 +86,8 @@ class Gitolite
      */
     public function setGitRemoteRepositoryURL($gitRemoteRepositoryURL)
     {
-        $this->gitRemoteRepositoryURL = (string) $gitRemoteRepositoryURL;
+        $this->gitRemoteRepositoryURL = (string)$gitRemoteRepositoryURL;
+
         return $this;
     }
 
@@ -75,7 +110,8 @@ class Gitolite
      */
     public function setGitLocalRepositoryPath($gitLocalRepositoryPath)
     {
-        $this->gitLocalRepositoryPath = (string) $gitLocalRepositoryPath;
+        $this->gitLocalRepositoryPath = (string)$gitLocalRepositoryPath;
+
         return $this;
     }
 
@@ -98,7 +134,8 @@ class Gitolite
      */
     public function setGitEmail($gitEmail)
     {
-        $this->gitEmail = (string) $gitEmail;
+        $this->gitEmail = (string)$gitEmail;
+
         return $this;
     }
 
@@ -121,7 +158,8 @@ class Gitolite
      */
     public function setGitUsername($gitUsername)
     {
-        $this->gitUsername = (string) $gitUsername;
+        $this->gitUsername = (string)$gitUsername;
+
         return $this;
     }
 
@@ -144,7 +182,8 @@ class Gitolite
      */
     public function setGitServerName($gitServerName)
     {
-        $this->gitServerName = (string) $gitServerName;
+        $this->gitServerName = (string)$gitServerName;
+
         return $this;
     }
 
@@ -161,13 +200,14 @@ class Gitolite
     /**
      * Set Repos
      *
-     * @param array $repos An array of repositories
+     * @param Repo[] $repos An array of repositories
      *
      * @return self
      */
     public function setRepos(array $repos)
     {
         $this->$repos = $repos;
+
         return $this;
     }
 
@@ -196,14 +236,16 @@ class Gitolite
     /**
      * Add repo
      *
-     * @param string $repo A repository object
+     * @param Repo $repo A repository object
      *
      * @return self
      */
     public function addRepo(Repo $repo)
     {
         $name = $repo->getName();
+
         $this->repos[$name] = $repo;
+
         return $this;
     }
 
@@ -220,16 +262,18 @@ class Gitolite
     /**
      * Set Users
      *
-     * @param array $users An array of user objects
+     * @param User[] $users An array of user objects
      *
      * @return self
      */
     public function setUsers(array $users)
     {
         $this->users = array();
+
         foreach ($users as $user) {
             $this->addUser($user);
         }
+
         return $this;
     }
 
@@ -258,30 +302,34 @@ class Gitolite
     /**
      * Add user
      *
-     * @param string $user A user object
+     * @param User $user A user object
      *
      * @return self
      */
     public function addUser(User $user)
     {
         $username = $user->getUsername();
+
         $this->users[$username] = $user;
+
         return $this;
     }
 
     /**
      * Set Teams
      *
-     * @param array $teams An array of team objects
+     * @param Team[] $teams An array of team objects
      *
      * @return self
      */
     public function setTeams(array $teams)
     {
         $this->teams = array();
+
         foreach ($teams as $team) {
             $this->addTeam($team);
         }
+
         return $this;
     }
 
@@ -310,20 +358,26 @@ class Gitolite
     /**
      * Add Team
      *
-     * @param string $team A team object
+     * @param Team $team A team object
      *
      * @return self
      */
     public function addTeam(Team $team)
     {
         $name = $team->getName();
+
         $this->teams[$name] = $team;
+
         return $this;
     }
 
     /**
      * Import gitolite.conf
      *
+     * @throws \Exception if team definition is invalid
+     * @throws \Exception if team is not defined
+     * @throws \Exception if repository definition is invalid
+     * @throws \Exception if rule definition is invalid
      */
     public function import()
     {
@@ -334,15 +388,17 @@ class Gitolite
 
         $file = file($this->getGitLocalRepositoryPath() . DIRECTORY_SEPARATOR . self::GITOLITE_CONF_DIR . DIRECTORY_SEPARATOR . self::GITOLITE_CONF_FILE);
 
-        foreach($file as $line)
-        {
+        foreach ($file as $line) {
             $line = trim($line);
-            if($line == '') continue;
+            if ($line == '') {
+                continue;
+            }
 
-            if(preg_match('/^[@]/', $line))
-            {
+            if (preg_match('/^[@]/', $line)) {
                 $line_split = preg_split("/[=]+/", $line, 2);
-                if(count($line_split) != 2) throw new \Exception('Invalid team def.');
+                if (count($line_split) != 2) {
+                    throw new \Exception(sprintf('Invalid team definition for the following line content: "%s".', $line));
+                }
 
                 $team_name = substr(trim($line_split[0]), 1);
 
@@ -351,28 +407,27 @@ class Gitolite
 
                 $usr = preg_split("/[\s\t]+/", trim($line_split[1]));
 
-                foreach($usr as $u)
-                {
+                foreach ($usr as $u) {
                     // is team
-                    if(substr($u, 0, 1) == '@')
-                    {
+                    if (substr($u, 0, 1) == '@') {
                         $u = substr($u, 1);
-                        if( ! isset($this->teams[$u])) throw new \Exception('Undef team.');
-                        $team->addTeam($this->teams[$u]);
-                    }
-                    // is user
-                    else
-                    {
-                        if(isset($this->users[$u]))
-                        {
-                            $team->addUser($this->users[$u]);
+                        if (!isset($this->teams[$u])) {
+                            throw new \Exception(sprintf('Undefined team named "%s".', $u));
                         }
-                        else
-                        {
+                        $team->addTeam($this->teams[$u]);
+                    } // is user
+                    else {
+                        if (isset($this->users[$u])) {
+                            $team->addUser($this->users[$u]);
+                        } else {
                             $user = new User();
                             $user->setUsername($u);
-                            $key = $this->getGitLocalRepositoryPath() . DIRECTORY_SEPARATOR . self::GITOLITE_KEY_DIR . DIRECTORY_SEPARATOR . $user->renderKeyFileName();
-                            if(file_exists($key)) $user->addKey(file_get_contents($key));
+                            $key = $this->getGitLocalRepositoryPath(
+                                ) . DIRECTORY_SEPARATOR . self::GITOLITE_KEY_DIR . DIRECTORY_SEPARATOR . $user->renderKeyFileName(
+                                );
+                            if (file_exists($key)) {
+                                $user->addKey(file_get_contents($key));
+                            }
                             $this->users[$u] = $user;
                             $team->addUser($user);
                         }
@@ -380,44 +435,45 @@ class Gitolite
                 }
 
                 $this->teams[$team_name] = $team;
-
-            }
-            elseif(preg_match('/^repo/', $line))
-            {
+            } elseif (preg_match('/^repo/', $line)) {
                 $line_split = preg_split("/[\s\t]+/", $line, 2);
 
-                if(count($line_split) != 2) throw new \Exception('Invalid repository def.');
+                if (count($line_split) != 2) {
+                    throw new \Exception(sprintf('Invalid repository definition for the following line content: "%s".', $line));
+                }
 
                 $repo = new Repo();
                 $repo->setName(trim($line_split[1]));
-            }
-            elseif(preg_match('/^(C|R|RW|RW\+|\-|RWC|RW\+C|RWD|RW\+D|RWCD|RW\+CD|RWDC|RW\+DC)/', $line))
-            {
-                $teams = array();
-                $users = array();
+            } elseif (preg_match('/^(C|R|RW|RW\+|\-|RWC|RW\+C|RWD|RW\+D|RWCD|RW\+CD|RWDC|RW\+DC)/', $line)) {
+                $teams = [];
+                $users = [];
 
                 $line_split = preg_split("/[=]+/", $line, 2);
-                if(count($line_split) != 2) throw new \FuelException('Invalid rule.');
+                if (count($line_split) != 2) {
+                    throw new \Exception('Invalid rule definition for the following line content: "%s".', $line));
+                }
 
                 $acl_split = preg_split("/[\s\t]+/", trim($line_split[0]), 2);
-                $refexes = (isset($acl_split[1])) ? $acl_split[1] : false;
+                $refexes   = (isset($acl_split[1])) ? $acl_split[1] : false;
 
                 $acl = new Acl();
                 $acl->setPermission($acl_split[0]);
-                if($refexes) $acl->setRefexes($refexes);
+                if ($refexes) {
+                    $acl->setRefexes($refexes);
+                }
 
                 $usr = preg_split("/[\s\t]+/", trim($line_split[1]));
-                foreach($usr as $u)
-                {
+                foreach ($usr as $u) {
                     // is team
-                    if(substr($u, 0, 1) == '@')
-                    {
+                    if (substr($u, 0, 1) == '@') {
                         $u = substr($u, 1);
 
-                        if( $u !== 'all' && ! isset($this->teams[$u])) throw new \Exception('Undef. team');
+                        if ($u !== 'all' && !isset($this->teams[$u])) {
+                            throw new \Exception(sprintf('Undefined team named "%s".', $u));
+                        }
 
-                        if($u === 'all' || ($u !== 'all' && isset($this->teams[$u]))) {
-                            if($u === 'all') {
+                        if ($u === 'all' || ($u !== 'all' && isset($this->teams[$u]))) {
+                            if ($u === 'all') {
                                 $team = new Team();
                                 $team->setName("all");
                                 $acl->addTeam($team);
@@ -425,16 +481,17 @@ class Gitolite
                                 $acl->addTeam($this->teams[$u]);
                             }
                         }
-                    }
-                    // is user
-                    else
-                    {
-                        if( ! isset($this->users[$u]))
-                        {
+                    } // is user
+                    else {
+                        if (!isset($this->users[$u])) {
                             $this->users[$u] = new User();
                             $this->users[$u]->setUsername($u);
-                            $key = $this->getGitLocalRepositoryPath() . DIRECTORY_SEPARATOR . self::GITOLITE_KEY_DIR . DIRECTORY_SEPARATOR . $this->users[$u]->renderKeyFileName();
-                            if(file_exists($key)) $this->users[$u]->addKey(file_get_contents($key));
+                            $key = $this->getGitLocalRepositoryPath(
+                                ) . DIRECTORY_SEPARATOR . self::GITOLITE_KEY_DIR . DIRECTORY_SEPARATOR . $this->users[$u]->renderKeyFileName(
+                                );
+                            if (file_exists($key)) {
+                                $this->users[$u]->addKey(file_get_contents($key));
+                            }
                         }
 
                         $acl->addUser($this->users[$u]);
@@ -451,21 +508,26 @@ class Gitolite
      * Get PHPGit_Repository
      *
      * @return PHPGit_Repository
+     *
+     * @throws \Exception if Git local repository path not defined
+     * @throws \Exception if Git repository already exists
+     * @throws \Exception if Git repository directory could not be created
      */
     protected function getGitoliteRepository()
     {
         if (null === $this->gitoliteRepository) {
             if (null === $this->getGitLocalRepositoryPath()) {
-                throw new \Exception('Git local repository path not defined');
+                throw new \Exception('Git local repository path not defined.');
             }
+
             try {
                 $this->gitoliteRepository = new \PHPGit_Repository($this->getGitLocalRepositoryPath());
             } catch (\Exception $exc) {
 
                 if (file_exists($this->getGitLocalRepositoryPath())) {
-                    throw new \Exception("Directory {$this->getGitLocalRepositoryPath()} already exists, impossible to create repository");
+                    throw new \Exception("Directory {$this->getGitLocalRepositoryPath()} already exists, impossible to create repository.");
                 } else {
-                    if (mkdir($this->getGitLocalRepositoryPath(), 0770)) {
+                    if (mkdir($this->getGitLocalRepositoryPath(), 0775)) {
                         $this->gitoliteRepository = \PHPGit_Repository::create($this->getGitLocalRepositoryPath());
                     } else {
                         throw new \Exception('Impossible to create Directory informed in Git local repository (possibly).');
@@ -473,6 +535,7 @@ class Gitolite
                 }
             }
         }
+
         return $this->gitoliteRepository;
     }
 
@@ -485,23 +548,24 @@ class Gitolite
      *
      * @return bool
      *
-     * @throws \Exception
+     * @throws \Exception if file could not be written
      */
-    protected function writeFile($filename, $data, $checkChange=true)
+    protected function writeFile($filename, $data, $checkChange = true)
     {
         if (!file_exists($filename)) {
             if (!file_put_contents($filename, $data)) {
-                throw new \Exception("Impossible to write file {$filename}", 1);
+                throw new \Exception("Impossible to write file {$filename}.", 1);
             }
         } else {
             if (!$checkChange) {
                 if (!file_put_contents($filename, $data)) {
-                    throw new \Exception("Impossible to write file {$filename}", 1);
+                    throw new \Exception("Impossible to write file {$filename}.", 1);
                 }
             } else {
                 if ($data != file_get_contents($filename)) {
                     file_put_contents($filename, $data);
                 }
+
                 return true;
             }
         }
@@ -515,6 +579,7 @@ class Gitolite
     public function pushConfig()
     {
         $cmds[] = 'push gitoliteorigin master';
+
         $this->runGitCommand($cmds);
     }
 
@@ -527,14 +592,13 @@ class Gitolite
     {
         $status = $this->runGitCommand('status');
 
-        if( ! preg_match('/nothing to commit/', $status))
-        {
+        if( ! preg_match('/nothing to commit/', $status)) {
             $cmds[] = 'add --all .';
 
             // check for deleted keys
             preg_match_all('/deleted:[\s]+(.+)/', $status, $matches);
-            if(isset($matches[1]) && is_array($matches[1]))
-            {
+
+            if(isset($matches[1]) && is_array($matches[1])) {
                 foreach($matches[1] as $v)
                 {
                     $cmds[] = 'rm '.$v;
@@ -548,7 +612,9 @@ class Gitolite
                 $cmds[] = 'commit -m "Update configuration from ' .
                 $this->getGitServerName() . ' on ' .date('Y-m-d H:i:s') . '"';
             }
+
             $this->runGitCommand($cmds);
+
             return true;
         }
 
@@ -617,7 +683,10 @@ class Gitolite
         $this->gitConfig();
         $this->writeFullConfFile();
         $this->writeUsers();
-        die();
+
+        if ($this->commitConfig()) {
+            $this->pushConfig();
+        }
     }
 
     /**
@@ -638,10 +707,13 @@ class Gitolite
     public function renderUserAndTeams()
     {
         $return = '';
+
         foreach ($this->getTeams() as $team) {
-            if($team->getName() !="all" )
+            if ($team->getName() !="all") {
                 $return .= $team->render();
+            }
         }
+
         return $return . PHP_EOL;
     }
 
@@ -653,9 +725,11 @@ class Gitolite
     public function renderRepos()
     {
         $return = '';
+
         foreach ($this->getRepos() as $repo) {
             $return .= $repo->render();
         }
+
         return $return;
     }
 
@@ -687,11 +761,11 @@ class Gitolite
     /**
      * Run git commands
      *
-     * @param mixed $cmds A command or an array of commands
+     * @param string|array $cmds A command or an array of commands
      *
-     * @return string
+     * @return string|false
      */
-    protected function runGitCommand($cmds='')
+    protected function runGitCommand($cmds = '')
     {
         $output = null;
         if (!is_string($cmds) && !is_array($cmds)) {
@@ -709,9 +783,9 @@ class Gitolite
                 $this->log("$date COMMAND RUN: git $cmd");
                 $this->log("$date OUTPUT : . $output");
             } catch (\GitRuntimeException $e) {
-                $this->log_error("$date GIT ERROR: " . $e->getMessage());
+                $this->logError("$date GIT ERROR: " . $e->getMessage());
             } catch (\Exception $e) {
-                $this->log_error("$date ERROR: " . $e->getMessage());
+                $this->logError("$date ERROR: " . $e->getMessage());
             }
         }
 
@@ -737,7 +811,7 @@ class Gitolite
      *
      * @return void
      */
-    protected function log_error($message)
+    protected function logError($message)
     {
         $this->log['error'][] = $message;
     }
@@ -755,13 +829,15 @@ class Gitolite
     /**
      * Get the log as string
      *
-     * @param  string $type = info or error
+     * @param string $type type of log message ("info" or "error", defaults to "info")
      *
-     * @return string
+     * @return string|false
      */
     public function getLogAsString($type = 'info')
     {
-        if( ! isset($this->log[$type])) return false;
+        if(!isset($this->log[$type])) {
+            return false;
+        }
 
         return implode(PHP_EOL, $this->log[$type]);
     }
