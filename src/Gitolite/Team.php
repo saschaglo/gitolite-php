@@ -186,7 +186,7 @@ class Team
             $teams[] = $team->getFormattedName();
         }
 
-        return $this->getFormatedName() . ' = '
+        return $this->getFormattedName() . ' = '
             . implode(' ', $users) . ' '
             . implode(' ', $teams)
             . ($newLine ? PHP_EOL : '');
