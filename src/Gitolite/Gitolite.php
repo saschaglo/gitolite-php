@@ -586,7 +586,7 @@ class Gitolite
     /**
      * Commits changes in configuration
      *
-     * @return void
+     * @return bool
      */
     public function commitConfig($message = null)
     {
