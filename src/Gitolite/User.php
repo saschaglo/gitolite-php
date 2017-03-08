@@ -35,7 +35,8 @@ class User
     /**
      * @var array
      */
-    protected $keys = array();
+    protected $keys = [];
+
 
     /**
      * Set Username
@@ -46,10 +47,11 @@ class User
      */
     public function setUsername($username)
     {
-        $this->username = (string)$username;
+        $this->username = (string) $username;
 
         return $this;
     }
+
 
     /**
      * Get Username
@@ -61,6 +63,7 @@ class User
         return $this->username;
     }
 
+
     /**
      * Set Keys
      *
@@ -70,7 +73,7 @@ class User
      */
     public function setKeys(array $keys)
     {
-        $this->keys = array();
+        $this->keys = [];
 
         foreach ($keys as $key) {
             $this->addKey($key);
@@ -78,6 +81,7 @@ class User
 
         return $this;
     }
+
 
     /**
      * Get Keys
@@ -88,6 +92,7 @@ class User
     {
         return $this->keys;
     }
+
 
     /**
      * Get First Key
@@ -102,8 +107,9 @@ class User
             throw new \Exception("No key for user {$this->getUsername()} found.");
         }
 
-        return (string)$this->keys[0];
+        return (string) $this->keys[0];
     }
+
 
     /**
      * Add key
@@ -114,10 +120,11 @@ class User
      */
     public function addKey($key)
     {
-        $this->keys[] = (string)$key;
+        $this->keys[] = (string) $key;
 
         return $this;
     }
+
 
     /**
      * Set Email
@@ -128,10 +135,11 @@ class User
      */
     public function setEmail($email)
     {
-        $this->email = (string)$email;
+        $this->email = (string) $email;
 
         return $this;
     }
+
 
     /**
      * Get Email
@@ -142,6 +150,7 @@ class User
     {
         return $this->email;
     }
+
 
     /**
      * Returns key filename in form username.pub

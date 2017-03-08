@@ -22,9 +22,21 @@ namespace Gitolite;
  */
 class Acl
 {
-    private $allowedPermissions = array(
-        'C', 'R', 'RW', 'RW+', '-', 'RWC', 'RW+C', 'RWD', 'RW+D', 'RWCD', 'RW+CD', 'RWDC', 'RW+DC',
-    );
+    private $allowedPermissions = [
+        'C',
+        'R',
+        'RW',
+        'RW+',
+        '-',
+        'RWC',
+        'RW+C',
+        'RWD',
+        'RW+D',
+        'RWCD',
+        'RW+CD',
+        'RWDC',
+        'RW+DC',
+    ];
 
     /**
      * @var string
@@ -39,12 +51,13 @@ class Acl
     /**
      * @var User[]
      */
-    protected $users = array();
+    protected $users = [];
 
     /**
      * @var Team[]
      */
-    protected $teams = array();
+    protected $teams = [];
+
 
     /**
      * Set Permission
@@ -55,10 +68,12 @@ class Acl
      * @param string $permission A permission
      *
      * @return self
+     *
+     * @throws \Exception if permission is unknown
      */
     public function setPermission($permission)
     {
-        $permission = (string)$permission;
+        $permission = (string) $permission;
         if (!in_array($permission, $this->allowedPermissions)) {
             throw new \Exception("Unknow permission '{$permission}'");
         }
@@ -66,6 +81,7 @@ class Acl
 
         return $this;
     }
+
 
     /**
      * Get Permission
@@ -76,6 +92,7 @@ class Acl
     {
         return $this->permission;
     }
+
 
     /**
      * Set Refexes
@@ -90,6 +107,7 @@ class Acl
 
         return $this;
     }
+
 
     /**
      * Get Refexes
@@ -111,7 +129,7 @@ class Acl
      */
     public function setUsers(array $users)
     {
-        $this->users = array();
+        $this->users = [];
 
         foreach ($users as $user) {
             $this->addUser($user);
@@ -119,6 +137,7 @@ class Acl
 
         return $this;
     }
+
 
     /**
      * Get Users
@@ -129,6 +148,7 @@ class Acl
     {
         return $this->users;
     }
+
 
     /**
      * Add user
@@ -144,6 +164,7 @@ class Acl
         return $this;
     }
 
+
     /**
      * Set Teams
      *
@@ -153,7 +174,7 @@ class Acl
      */
     public function setTeams(array $teams)
     {
-        $this->teams = array();
+        $this->teams = [];
 
         foreach ($teams as $team) {
             $this->addTeam($team);
@@ -161,6 +182,7 @@ class Acl
 
         return $this;
     }
+
 
     /**
      * Get Teams
@@ -171,6 +193,7 @@ class Acl
     {
         return $this->teams;
     }
+
 
     /**
      * Add Team
@@ -185,6 +208,7 @@ class Acl
 
         return $this;
     }
+
 
     /**
      * Returns acl line
@@ -208,12 +232,12 @@ class Acl
             throw new \Exception("No users neither teams defined.");
         }
 
-        $teams = array();
+        $teams = [];
         foreach ($this->getTeams() as $team) {
             $teams[] = $team->getFormattedName();
         }
 
-        $users = array();
+        $users = [];
         foreach ($this->getUsers() as $user) {
             $users[] = $user->getUsername();
         }

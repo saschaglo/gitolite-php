@@ -30,12 +30,13 @@ class Team
     /**
      * @var User[]
      */
-    protected $users = array();
+    protected $users = [];
 
     /**
      * @var Team[]
      */
-    protected $teams = array();
+    protected $teams = [];
+
 
     /**
      * Set Name
@@ -46,10 +47,11 @@ class Team
      */
     public function setName($name)
     {
-        $this->name = (string)$name;
+        $this->name = (string) $name;
 
         return $this;
     }
+
 
     /**
      * Get Name
@@ -61,6 +63,7 @@ class Team
         return $this->name;
     }
 
+
     /**
      * Get Formated Name (as @team)
      *
@@ -71,6 +74,7 @@ class Team
         return '@' . $this->name;
     }
 
+
     /**
      * Set Users
      *
@@ -80,7 +84,7 @@ class Team
      */
     public function setUsers(array $users)
     {
-        $this->users = array();
+        $this->users = [];
 
         foreach ($users as $user) {
             $this->addUser($user);
@@ -88,6 +92,7 @@ class Team
 
         return $this;
     }
+
 
     /**
      * Get Users
@@ -98,6 +103,7 @@ class Team
     {
         return $this->users;
     }
+
 
     /**
      * Add user
@@ -113,6 +119,7 @@ class Team
         return $this;
     }
 
+
     /**
      * Set Teams
      *
@@ -122,7 +129,7 @@ class Team
      */
     public function setTeams(array $teams)
     {
-        $this->teams = array();
+        $this->teams = [];
 
         foreach ($teams as $team) {
             $this->addTeam($team);
@@ -130,6 +137,7 @@ class Team
 
         return $this;
     }
+
 
     /**
      * Get Teams
@@ -140,6 +148,7 @@ class Team
     {
         return $this->teams;
     }
+
 
     /**
      * Add Team
@@ -155,6 +164,7 @@ class Team
         return $this;
     }
 
+
     /**
      * Returns team group line
      *
@@ -166,12 +176,12 @@ class Team
      */
     public function render($newLine = true)
     {
-        $users = array();
+        $users = [];
         foreach ($this->getUsers() as $user) {
             $users[] = $user->getUsername();
         }
 
-        $teams = array();
+        $teams = [];
         foreach ($this->getTeams() as $team) {
             $teams[] = $team->getFormattedName();
         }

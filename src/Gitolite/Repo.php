@@ -30,7 +30,8 @@ class Repo
     /**
      * @var Acl[]
      */
-    protected $acls = array();
+    protected $acls = [];
+
 
     /**
      * Set Name
@@ -41,10 +42,11 @@ class Repo
      */
     public function setName($name)
     {
-        $this->name = (string)$name;
+        $this->name = (string) $name;
 
         return $this;
     }
+
 
     /**
      * Get Name
@@ -55,6 +57,7 @@ class Repo
     {
         return $this->name;
     }
+
 
     /**
      * Set Acls
@@ -70,6 +73,7 @@ class Repo
         return $this;
     }
 
+
     /**
      * Get Acls
      *
@@ -79,6 +83,7 @@ class Repo
     {
         return $this->acls;
     }
+
 
     /**
      * Add acl
@@ -93,6 +98,7 @@ class Repo
 
         return $this;
     }
+
 
     /**
      * Returns team group line
@@ -118,7 +124,7 @@ class Repo
                 $render = null;
             }
 
-            if($render) {
+            if ($render) {
                 $return .= '    ' . $render;
             }
         }
