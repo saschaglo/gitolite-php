@@ -450,7 +450,7 @@ class Gitolite
 
                 $line_split = preg_split("/[=]+/", $line, 2);
                 if (count($line_split) != 2) {
-                    throw new \Exception('Invalid rule definition for the following line content: "%s".', $line));
+                    throw new \Exception(sprintf('Invalid rule definition for the following line content: "%s".', $line));
                 }
 
                 $acl_split = preg_split("/[\s\t]+/", trim($line_split[0]), 2);
@@ -683,14 +683,10 @@ class Gitolite
         $this->gitConfig();
         $this->writeFullConfFile();
         $this->writeUsers();
-<<<<<<< HEAD
 
         if ($this->commitConfig()) {
             $this->pushConfig();
         }
-=======
-        if($this->commitConfig()) $this->pushConfig();
->>>>>>> f3ae2bf8e78e4ca79c09b375f8cdfa2c60a754b4
     }
 
     /**
