@@ -120,7 +120,7 @@ class User
      */
     public function addKey($key)
     {
-        $this->keys[] = (string) $key;
+        $this->keys[] = (string)$key;
 
         return $this;
     }

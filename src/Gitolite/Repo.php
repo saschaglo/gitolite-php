@@ -68,7 +68,11 @@ class Repo
      */
     public function setAcls(array $acls)
     {
-        $this->acls = $acls;
+        $this->acls = [];
+
+        foreach ($acls as $acl) {
+            $this->addAcl($acl);
+        }
 
         return $this;
     }
@@ -94,7 +98,7 @@ class Repo
      */
     public function addAcl(Acl $acl)
     {
-        $this->acls[] = $acl;
+        $this->acls[$acl->getChecksum()] = $acl;
 
         return $this;
     }

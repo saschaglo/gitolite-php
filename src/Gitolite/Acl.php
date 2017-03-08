@@ -75,7 +75,7 @@ class Acl
     {
         $permission = (string) $permission;
         if (!in_array($permission, $this->allowedPermissions)) {
-            throw new \Exception("Unknow permission '{$permission}'");
+            throw new \Exception("Unknown permission '{$permission}'.");
         }
         $this->permission = $permission;
 
@@ -250,5 +250,16 @@ class Acl
             . implode(' ', $users) . ' '
             . implode(' ', $teams)
             . ($newLine ? PHP_EOL : '');
+    }
+
+
+    /**
+     * Returns a md5 checksum created from the rendered acl line
+     *
+     * @return string
+     */
+    public function getChecksum()
+    {
+        return md5($this->render(false));
     }
 }

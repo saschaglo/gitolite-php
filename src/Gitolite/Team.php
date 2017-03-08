@@ -114,7 +114,7 @@ class Team
      */
     public function addUser(User $user)
     {
-        $this->users[] = $user;
+        $this->users[$user->getUsername()] = $user;
 
         return $this;
     }
@@ -159,7 +159,7 @@ class Team
      */
     public function addTeam(Team $team)
     {
-        $this->teams[] = $team;
+        $this->teams[$team->getName()] = $team;
 
         return $this;
     }
