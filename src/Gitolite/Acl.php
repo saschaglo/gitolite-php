@@ -18,26 +18,30 @@ namespace Gitolite;
  * @author  Rafael Goulart <rafaelgou@gmail.com>
  * @license GNU Lesser General Public License
  * @link    https://github.com/rafaelgou/gitolite-php
- * see CHANGELOG
+ * @see     CHANGELOG
  */
 class Acl
 {
     private $allowedPermissions = array(
-        'R', 'RW', 'RW+', '-', 'RWC', 'RW+C', 'RWD', 'RW+D', 'RWCD', 'RW+CD', 'RWDC', 'RW+DC',
+        'C', 'R', 'RW', 'RW+', '-', 'RWC', 'RW+C', 'RWD', 'RW+D', 'RWCD', 'RW+CD', 'RWDC', 'RW+DC',
     );
+
     protected $permission = null;
+
     protected $refexes = '';
+
     protected $users = array();
+
     protected $teams = array();
 
     /**
      * Set Permission
      *
-     * Valids: R, RW, RW+, -, RWC, RW+C, RWD, RW+D, RWCD, RW+CD, RWDC, RW+DC
+     * Valids: C, R, RW, RW+, -, RWC, RW+C, RWD, RW+D, RWCD, RW+CD, RWDC, RW+DC
      *
      * @param string $permission A permission
      *
-     * @return Gitolite\Acl
+     * @return self
      */
     public function setPermission($permission)
     {
@@ -64,7 +68,7 @@ class Acl
      *
      * @param string $refexes A refex
      *
-     * @return Gitolite\Acl
+     * @return self
      */
     public function setRefexes($refexes)
     {
@@ -88,7 +92,7 @@ class Acl
      *
      * @param array $users An array of user objects
      *
-     * @return Gitolite\Acl
+     * @return self
      */
     public function setUsers(array $users)
     {
@@ -102,7 +106,7 @@ class Acl
     /**
      * Get Users
      *
-     * @return array of Users
+     * @return User[]
      */
     public function getUsers()
     {
@@ -114,7 +118,7 @@ class Acl
      *
      * @param User $user A user object
      *
-     * @return Gitolite\Acl
+     * @return self
      */
     public function addUser(User $user)
     {
@@ -127,7 +131,7 @@ class Acl
      *
      * @param array $teams An array of team objects
      *
-     * @return Gitolite\Acl
+     * @return self
      */
     public function setTeams(array $teams)
     {
@@ -141,7 +145,7 @@ class Acl
     /**
      * Get Teams
      *
-     * @return array of Teams
+     * @return Team[]
      */
     public function getTeams()
     {
@@ -153,7 +157,7 @@ class Acl
      *
      * @param Team $team A team object
      *
-     * @return Gitolite\Acl
+     * @return self
      */
     public function addTeam(Team $team)
     {
@@ -193,11 +197,10 @@ class Acl
         $refexes = ( ! empty($this->refexes)) ? $this->refexes . ' ' : '';
 
         return $this->permission . ' '
-        		. $refexes
-        		. '= '
+                . $refexes
+                . '= '
                 . implode(' ', $users) . ' '
                 . implode(' ', $teams)
                 . ($nl ? PHP_EOL : '');
     }
-
 }

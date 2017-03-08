@@ -18,7 +18,7 @@ namespace Gitolite;
  * @author  Rafael Goulart <rafaelgou@gmail.com>
  * @license GNU Lesser General Public License
  * @link    https://github.com/rafaelgou/gitolite-php
- * see CHANGELOG
+ * @see     CHANGELOG
  */
 class User
 {
@@ -31,7 +31,7 @@ class User
      *
      * @param string $username The user name
      *
-     * @return Gitolite\User
+     * @return self
      */
     public function setUsername($username)
     {
@@ -54,7 +54,7 @@ class User
      *
      * @param array $keys An array of keys
      *
-     * @return Gitolite\User
+     * @return self
      */
     public function setKeys(array $keys)
     {
@@ -68,7 +68,7 @@ class User
     /**
      * Get Keys
      *
-     * @return string
+     * @return array An array of keys
      */
     public function getKeys()
     {
@@ -82,6 +82,10 @@ class User
      */
     public function getFirstKey()
     {
+        if (count($this->keys) == 0) {
+            throw new \Exception("No key for user {$this->getUsername()} found.");
+        }
+
         return (string) $this->keys[0];
     }
 
@@ -90,7 +94,7 @@ class User
      *
      * @param string $key A key
      *
-     * @return Gitolite\User
+     * @return self
      */
     public function addKey($key)
     {
@@ -103,7 +107,7 @@ class User
      *
      * @param string $email An email
      *
-     * @return Gitolite\User
+     * @return self
      */
     public function setEmail($email)
     {
@@ -126,8 +130,8 @@ class User
      *
      * @return string
      */
-    public function renderKeyFileName()
+    public function renderKeyFileName($suffix = null)
     {
-        return $this->username . '.pub';
+        return $this->username . $suffix . '.pub';
     }
 }

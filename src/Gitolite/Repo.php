@@ -18,7 +18,7 @@ namespace Gitolite;
  * @author  Rafael Goulart <rafaelgou@gmail.com>
  * @license GNU Lesser General Public License
  * @link    https://github.com/rafaelgou/gitolite-php
- * see CHANGELOG
+ * @see     CHANGELOG
  */
 class Repo
 {
@@ -30,7 +30,7 @@ class Repo
      *
      * @param string $name The repository name
      *
-     * @return Gitolite\Team
+     * @return self
      */
     public function setName($name)
     {
@@ -53,7 +53,7 @@ class Repo
      *
      * @param array $acls An array of acl objects
      *
-     * @return Gitolite\Team
+     * @return self
      */
     public function setAcls(array $acls)
     {
@@ -64,7 +64,7 @@ class Repo
     /**
      * Get Acls
      *
-     * @return array of Acls
+     * @return Acl[]
      */
     public function getAcls()
     {
@@ -76,7 +76,7 @@ class Repo
      *
      * @param Acl $acl An acl object
      *
-     * @return Gitolite\Team
+     * @return self
      */
     public function addAcl(Acl $acl)
     {
@@ -100,11 +100,17 @@ class Repo
         $return = 'repo ' . $this->getName() . PHP_EOL;
 
         foreach ($this->getAcls() as $acl) {
-            $return .= '    ' . $acl->render();
+            try {
+                $render = $acl->render();
+            } catch (\Exception $e) {
+                $render = null;
+            }
+
+            if($render) {
+                $return .= '    ' . $render;
+            }
         }
 
         return $return . PHP_EOL;
     }
-
-
 }

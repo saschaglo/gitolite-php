@@ -18,7 +18,7 @@ namespace Gitolite;
  * @author  Rafael Goulart <rafaelgou@gmail.com>
  * @license GNU Lesser General Public License
  * @link    https://github.com/rafaelgou/gitolite-php
- * see CHANGELOG
+ * @see     CHANGELOG
  */
 class Team
 {
@@ -31,7 +31,7 @@ class Team
      *
      * @param string $name The team name
      *
-     * @return Gitolite\Team
+     * @return self
      */
     public function setName($name)
     {
@@ -64,7 +64,7 @@ class Team
      *
      * @param array $users An array of user objects
      *
-     * @return Gitolite\Team
+     * @return self
      */
     public function setUsers(array $users)
     {
@@ -78,7 +78,7 @@ class Team
     /**
      * Get Users
      *
-     * @return array of Users
+     * @return User[]
      */
     public function getUsers()
     {
@@ -90,7 +90,7 @@ class Team
      *
      * @param User $user An user object
      *
-     * @return Gitolite\Team
+     * @return self
      */
     public function addUser(User $user)
     {
@@ -101,9 +101,9 @@ class Team
     /**
      * Set Teams
      *
-     * @param array $teams An array of team objects
+     * @param Team[] $teams An array of team objects
      *
-     * @return Gitolite\Acl
+     * @return self
      */
     public function setTeams(array $teams)
     {
@@ -117,7 +117,7 @@ class Team
     /**
      * Get Teams
      *
-     * @return array of Teams
+     * @return Team[]
      */
     public function getTeams()
     {
@@ -129,7 +129,7 @@ class Team
      *
      * @param Team $team A team object
      *
-     * @return Gitolite\Acl
+     * @return self
      */
     public function addTeam(Team $team)
     {
@@ -163,5 +163,4 @@ class Team
                 . implode(' ', $teams)
                 . ($nl ? PHP_EOL : '');
     }
-
 }
