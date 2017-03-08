@@ -617,7 +617,7 @@ class Gitolite
         $this->gitConfig();
         $this->writeFullConfFile();
         $this->writeUsers();
-        die();
+        if($this->commitConfig()) $this->pushConfig();
     }
 
     /**
