@@ -683,10 +683,14 @@ class Gitolite
         $this->gitConfig();
         $this->writeFullConfFile();
         $this->writeUsers();
+<<<<<<< HEAD
 
         if ($this->commitConfig()) {
             $this->pushConfig();
         }
+=======
+        if($this->commitConfig()) $this->pushConfig();
+>>>>>>> f3ae2bf8e78e4ca79c09b375f8cdfa2c60a754b4
     }
 
     /**
