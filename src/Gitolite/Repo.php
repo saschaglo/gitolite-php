@@ -85,7 +85,7 @@ class Repo
      */
     public function getAcls()
     {
-        return $this->acls;
+        return array_values($this->acls);
     }
 
 

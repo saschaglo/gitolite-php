@@ -435,29 +435,31 @@ class Gitolite
 
                 $usr = preg_split("/[\s\t]+/", trim($line_split[1]));
 
-                foreach ($usr as $u) {
-                    // is team
-                    if (substr($u, 0, 1) == '@') {
-                        $u = substr($u, 1);
-                        if (!isset($this->teams[$u])) {
-                            throw new \Exception(sprintf('Undefined team named "%s".', $u));
-                        }
-                        $team->addTeam($this->teams[$u]);
-                    } // is user
-                    else {
-                        if (isset($this->users[$u])) {
-                            $team->addUser($this->users[$u]);
-                        } else {
-                            $user = new User();
-                            $user->setUsername($u);
-                            $key = $this->getGitLocalRepositoryPath(
-                                ) . DIRECTORY_SEPARATOR . self::GITOLITE_KEY_DIR . DIRECTORY_SEPARATOR . $user->renderKeyFileName(
-                                );
-                            if (file_exists($key)) {
-                                $user->addKey(file_get_contents($key));
+                if (trim($line_split[1]) != '') {
+                    foreach ($usr as $u) {
+                        // is team
+                        if (substr($u, 0, 1) == '@') {
+                            $u = substr($u, 1);
+                            if (!isset($this->teams[$u])) {
+                                throw new \Exception(sprintf('Undefined team named "%s".', $u));
                             }
-                            $this->users[$u] = $user;
-                            $team->addUser($user);
+                            $team->addTeam($this->teams[$u]);
+                        } // is user
+                        else {
+                            if (isset($this->users[$u])) {
+                                $team->addUser($this->users[$u]);
+                            } else {
+                                $user = new User();
+                                $user->setUsername($u);
+                                $key = $this->getGitLocalRepositoryPath(
+                                    ) . DIRECTORY_SEPARATOR . self::GITOLITE_KEY_DIR . DIRECTORY_SEPARATOR . $user->renderKeyFileName(
+                                    );
+                                if (file_exists($key)) {
+                                    $user->addKey(file_get_contents($key));
+                                }
+                                $this->users[$u] = $user;
+                                $team->addUser($user);
+                            }
                         }
                     }
                 }
@@ -492,38 +494,41 @@ class Gitolite
                 }
 
                 $usr = preg_split("/[\s\t]+/", trim($line_split[1]));
-                foreach ($usr as $u) {
-                    // is team
-                    if (substr($u, 0, 1) == '@') {
-                        $u = substr($u, 1);
 
-                        if ($u !== 'all' && !isset($this->teams[$u])) {
-                            throw new \Exception(sprintf('Undefined team named "%s".', $u));
-                        }
+                if (trim($line_split[1]) != '') {
+                    foreach ($usr as $u) {
+                        // is team
+                        if (substr($u, 0, 1) == '@') {
+                            $u = substr($u, 1);
 
-                        if ($u === 'all' || ($u !== 'all' && isset($this->teams[$u]))) {
-                            if ($u === 'all') {
-                                $team = new Team();
-                                $team->setName("all");
-                                $acl->addTeam($team);
-                            } else {
-                                $acl->addTeam($this->teams[$u]);
+                            if ($u !== 'all' && !isset($this->teams[$u])) {
+                                throw new \Exception(sprintf('Undefined team named "%s".', $u));
                             }
-                        }
-                    } // is user
-                    else {
-                        if (!isset($this->users[$u])) {
-                            $this->users[$u] = new User();
-                            $this->users[$u]->setUsername($u);
-                            $key = $this->getGitLocalRepositoryPath(
-                                ) . DIRECTORY_SEPARATOR . self::GITOLITE_KEY_DIR . DIRECTORY_SEPARATOR . $this->users[$u]->renderKeyFileName(
-                                );
-                            if (file_exists($key)) {
-                                $this->users[$u]->addKey(file_get_contents($key));
-                            }
-                        }
 
-                        $acl->addUser($this->users[$u]);
+                            if ($u === 'all' || ($u !== 'all' && isset($this->teams[$u]))) {
+                                if ($u === 'all') {
+                                    $team = new Team();
+                                    $team->setName("all");
+                                    $acl->addTeam($team);
+                                } else {
+                                    $acl->addTeam($this->teams[$u]);
+                                }
+                            }
+                        } // is user
+                        else {
+                            if (!isset($this->users[$u])) {
+                                $this->users[$u] = new User();
+                                $this->users[$u]->setUsername($u);
+                                $key = $this->getGitLocalRepositoryPath(
+                                    ) . DIRECTORY_SEPARATOR . self::GITOLITE_KEY_DIR . DIRECTORY_SEPARATOR . $this->users[$u]->renderKeyFileName(
+                                    );
+                                if (file_exists($key)) {
+                                    $this->users[$u]->addKey(file_get_contents($key));
+                                }
+                            }
+
+                            $acl->addUser($this->users[$u]);
+                        }
                     }
                 }
 

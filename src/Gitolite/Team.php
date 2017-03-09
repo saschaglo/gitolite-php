@@ -101,7 +101,7 @@ class Team
      */
     public function getUsers()
     {
-        return $this->users;
+        return array_values($this->users);
     }
 
 
@@ -146,7 +146,7 @@ class Team
      */
     public function getTeams()
     {
-        return $this->teams;
+        return array_values($this->teams);
     }
 
 

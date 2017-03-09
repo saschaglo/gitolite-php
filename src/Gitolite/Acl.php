@@ -146,7 +146,7 @@ class Acl
      */
     public function getUsers()
     {
-        return $this->users;
+        return array_values($this->users);
     }
 
 
@@ -191,7 +191,7 @@ class Acl
      */
     public function getTeams()
     {
-        return $this->teams;
+        return array_values($this->teams);
     }
 
 

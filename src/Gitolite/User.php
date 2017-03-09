@@ -90,7 +90,7 @@ class User
      */
     public function getKeys()
     {
-        return $this->keys;
+        return array_values($this->keys);
     }
 
 
